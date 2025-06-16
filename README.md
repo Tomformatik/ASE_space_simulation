@@ -46,7 +46,7 @@ Eine interaktive JavaScript-basierte Weltraum-Simulation mit realistischer Physi
 
 1. **Repository klonen oder herunterladen**
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/Tomformatik/ASE_space_simulation
    cd ASE_space_simulation
    ```
 
