@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weltraum-Simulation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Weltraum-Simulation</h1>
+            
+            <!-- Neues Skin-System UI -->
+            <div class="skin-bar">
+                <div class="coins-display">
+                    <span class="coin-icon">💰</span>
+                    <span id="coinCount">100</span>
+                    <span class="coin-label">Kosmische Münzen</span>
+                </div>
+                <button id="skinShop" class="btn btn-premium">✨ Skin-Shop</button>
+                <div class="current-skin">
+                    <span>Aktuelles Thema: </span>
+                    <span id="currentSkinName">Standard</span>
+                </div>
+                <button id="toggleNotifications" class="btn btn-toggle" title="Münz-Benachrichtigungen ein/ausschalten">🔔</button>
+            </div>
+            
+            <div class="controls">
+                <button id="addPlanet" class="btn">Planet hinzufügen</button>
+                <button id="addAsteroid" class="btn">Asteroid hinzufügen</button>
+                <button id="addBlackhole" class="btn btn-blackhole">🕳️ Schwarzes Loch</button>
+                <button id="bigBang" class="btn btn-bigbang">💥 Big Bang</button>
+                <button id="reset" class="btn btn-danger">Reset</button>
+                <div class="instruction">🎯 Ziehen Sie mit der Maus, um Planeten mit Richtung zu platzieren!</div>
+                <div class="instruction">🌌 Big Bang: Zwei schwarze Löcher umkreisen sich spiralförmig und fusionieren zu einem vielschichtigen Universum!</div>
+                <div class="control-group">
+                    <label for="gravity">Gravitation:</label>
+                    <input type="range" id="gravity" min="0" max="5" step="0.1" value="2.0">
+                    <span id="gravityValue">2.0</span>
+                </div>
+                <div class="control-group">
+                    <label for="speed">Geschwindigkeit:</label>
+                    <input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+                    <span id="speedValue">1.0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Skin Shop Modal -->
+        <div id="skinShopModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>✨ Premium Skin-Shop</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="skin-categories">
+                    <button class="skin-category active" data-category="themes">🌌 Themen</button>
+                    <button class="skin-category" data-category="effects">💫 Effekte</button>
+                    <button class="skin-category" data-category="premium">👑 Premium</button>
+                    <button class="skin-category" data-category="nft">🔮 Limitiert</button>
+                    <button class="skin-category" data-category="boosters">⚡ Booster</button>
+                </div>
+                <div class="skin-grid" id="skinGrid">
+                    <!-- Dynamisch gefüllt -->
+                </div>
+                <div class="modal-footer">
+                    <div class="earn-coins">
+                        <button id="watchAd" class="btn btn-ad">📺 Werbung schauen (+50 Münzen)</button>
+                        <button id="dailyBonus" class="btn btn-bonus">🎁 Täglicher Bonus</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <canvas id="spaceCanvas"></canvas>
+        <div class="info-panel">
+            <div class="info-toggle" onclick="toggleInfoPanel()">📊</div>
+            <div class="info-content">
+                <div class="info-section">
+                    <h3>🌌 Objekt-Statistiken</h3>
+                    <div class="info-item">
+                        <span class="label">Gesamtobjekte:</span>
+                        <span id="totalObjects">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">🪐 Planeten:</span>
+                        <span id="planetCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">⭐ Sterne:</span>
+                        <span id="starCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">🪨 Asteroiden:</span>
+                        <span id="asteroidCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">🕳️ Schwarze Löcher:</span>
+                        <span id="blackholeCount">0</span>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>💥 Ereignisse</h3>
+                    <div class="info-item">
+                        <span class="label">Kollisionen:</span>
+                        <span id="collisionCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Verschluckte Objekte:</span>
+                        <span id="swallowedCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Verbrannte Objekte:</span>
+                        <span id="burnedCount">0</span>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>⚙️ System</h3>
+                    <div class="info-item">
+                        <span class="label">FPS:</span>
+                        <span id="fps">0</span>
+                    </div>
+                    <div class="info-item" id="bigBangStatus">
+                        <strong>Normaler Modus</strong><br/>Gravitation: Normal
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="physics.js"></script>
+    <script src="effects.js"></script>
+    <script src="skins.js"></script>
+    <script src="simulation.js"></script>
+    <script>
+        function toggleInfoPanel() {
+            const content = document.querySelector('.info-content');
+            const toggle = document.querySelector('.info-toggle');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '📊';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '📈';
+            }
+        }
+    </script>
+</body>
+</html> 
